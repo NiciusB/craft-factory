@@ -1,0 +1,64 @@
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import { useGameStore } from '@/stores/game'
+import coreMod from '@/mods/coreMod'
+
+const gameStore = useGameStore()
+coreMod(gameStore)
+
+gameStore.addToInventory('core:greenhouse')
+gameStore.addToInventory('core:sapling')
+</script>
+
+<template>
+  <main>
+    <RouterView />
+  </main>
+  <footer>
+    <nav>
+      <RouterLink :to="{ name: 'inventory' }">Inventory</RouterLink>
+      <RouterLink :to="{ name: 'craftbook' }">Craftbook</RouterLink>
+    </nav>
+  </footer>
+  <ModalsContainer />
+</template>
+
+<style scoped>
+main {
+  min-height: calc(100vh - 100px);
+}
+
+footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+nav {
+  width: 100%;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.25rem;
+  padding: 1rem;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-brand);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+</style>
