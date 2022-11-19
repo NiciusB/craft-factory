@@ -103,5 +103,7 @@ const recipes = computed(() => {
 }
 .modal__content {
   margin-top: 1rem;
+  overflow-y: auto;
+  max-height: 60vh;
 }
 </style>

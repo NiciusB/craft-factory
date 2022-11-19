@@ -40,6 +40,7 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
+  background-color: var(--color-background);
 }
 
 nav {
