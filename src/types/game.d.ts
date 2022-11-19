@@ -15,7 +15,7 @@ declare global {
 
     export type Recipe = {
       id: RecipeId
-      in: { tag?: TagId; item?: ItemId; qty: number }[]
+      in: (({ tag: TagId } | { item: ItemId }) & { qty: numbe })[]
       out: { item: ItemId; qty: number; chance: number }[]
       process: ProcessId
       allowedAutomation: boolean

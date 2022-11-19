@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/game'
 import openCraftbookModal from '@/components/modals/openCraftbookModal'
+import IoScheme from '@/components/IoScheme.vue'
 
 const gameStore = useGameStore()
 
@@ -18,8 +19,8 @@ const recipe = gameStore.getRecipe(props.recipeId)
   <div class="recipe">
     <div>Process: {{ recipe.process }}</div>
     <div>{{ recipe.processingTicks }} ticks</div>
-    <div class="io-scheme">
-      <div>
+    <IoScheme>
+      <template #input>
         <div
           class="item"
           v-for="(rin, index) in recipe.in"
@@ -28,19 +29,22 @@ const recipe = gameStore.getRecipe(props.recipeId)
         >
           {{ `${rin.qty}x ${rin.item ?? rin.tag}` }}
         </div>
-      </div>
-      <div class="symbol-next">></div>
-      <div>
+      </template>
+      <template #output>
         <div
           class="item"
           v-for="(rout, index) in recipe.out"
           :key="index"
           @click="rout.item && openCraftbookModal(rout.item, 'uses')"
         >
-          {{ `${rout.qty}x ${rout.item}` }}
+          {{
+            `${rout.qty}x ${rout.item} ${
+              rout.chance !== 100 ? `(${rout.chance}% chance)` : ''
+            }`
+          }}
         </div>
-      </div>
-    </div>
+      </template>
+    </IoScheme>
   </div>
 </template>
 
@@ -51,18 +55,7 @@ const recipe = gameStore.getRecipe(props.recipeId)
   background-color: var(--color-background-soft);
   padding: 1rem;
 }
-.io-scheme {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-.io-scheme .symbol-next {
-  flex-grow: 0;
-  padding: 1rem;
-}
-.io-scheme .item {
+.item {
   cursor: pointer;
 }
 </style>

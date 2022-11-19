@@ -30,16 +30,18 @@ const inventory = computed(() =>
 
 <style>
 .inventory {
-  display: grid;
-  grid-template: repeat(5, 1fr) / repeat(8, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 1rem;
 }
 .inventory > div {
+  width: 7rem;
+  height: 7rem;
   position: relative;
   border: 1px solid var(--color-border-hover);
   border-radius: 5px;
-  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;

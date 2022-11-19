@@ -8,6 +8,12 @@ coreMod(gameStore)
 
 gameStore.addToInventory('core:greenhouse')
 gameStore.addToInventory('core:sapling')
+
+function loop() {
+  gameStore.runTick()
+  requestAnimationFrame(loop)
+}
+requestAnimationFrame(loop)
 </script>
 
 <template>
@@ -16,6 +22,7 @@ gameStore.addToInventory('core:sapling')
   </main>
   <footer>
     <nav>
+      <RouterLink :to="{ name: 'craft' }">Craft</RouterLink>
       <RouterLink :to="{ name: 'inventory' }">Inventory</RouterLink>
       <RouterLink :to="{ name: 'craftbook' }">Craftbook</RouterLink>
     </nav>
