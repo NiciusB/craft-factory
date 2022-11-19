@@ -125,9 +125,10 @@ export const useGameStore = defineStore('game', () => {
     // Check inventory has all items
     const stockCheck = checkStockedItemsForRecipe(recipeId)
     if (!stockCheck.hasEnoughItems) {
-      const error = stockCheck.errors[0]
       throw new Error(
-        `Not enough items of ${error.item} (${error.inventoryQty} vs ${error.requiredQty})`
+        `Not enough items (${JSON.stringify(
+          Array.from(stockCheck.missingItems)
+        )})`
       )
     }
 
@@ -150,19 +151,20 @@ export const useGameStore = defineStore('game', () => {
   function checkStockedItemsForRecipe(recipeId: Game.RecipeId) {
     const recipe = getRecipe(recipeId)
 
-    const errors: {
-      item: Game.ItemId
-      requiredQty: number
-      inventoryQty: number
-    }[] = []
+    const missingItems = new Map<
+      Game.ItemId,
+      {
+        requiredQty: number
+        inventoryQty: number
+      }
+    >()
 
     // Check inventory has all items
     recipe.in.forEach((rin) => {
       if ('item' in rin) {
         const inventoryValue = inventoryMap.value.get(rin.item) ?? 0
         if (inventoryValue < rin.qty) {
-          errors.push({
-            item: rin.item,
+          missingItems.set(rin.item, {
             requiredQty: rin.qty,
             inventoryQty: inventoryValue,
           })
@@ -174,8 +176,8 @@ export const useGameStore = defineStore('game', () => {
     })
 
     return {
-      hasEnoughItems: errors.length === 0,
-      errors,
+      hasEnoughItems: missingItems.size === 0,
+      missingItems,
     }
   }
 

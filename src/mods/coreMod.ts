@@ -65,7 +65,6 @@ export default function coreMod(gameStore: GameStoreType) {
       { item: 'core:sapling', qty: 1, chance: 100 },
       { item: 'core:sapling', qty: 1, chance: 25 },
       { item: 'core:log', qty: 2, chance: 100 },
-      { item: 'core:log', qty: 1, chance: 50 },
     ],
     allowedAutomation: false,
     processingTicks: 100,

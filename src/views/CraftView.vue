@@ -11,7 +11,12 @@
   </div>
   <div class="recipes">
     <div
-      v-for="{ recipe, hasEnoughItems, progressPercentage } in recipes"
+      v-for="{
+        recipe,
+        missingItems,
+        hasEnoughItems,
+        progressPercentage,
+      } in recipes"
       :key="recipe.id"
       @click="hasEnoughItems && onRecipeClicked(recipe)"
       :class="{ recipe: true, '--has-enough-items': hasEnoughItems }"
@@ -25,20 +30,20 @@
       <IoScheme>
         <template #input>
           <div v-for="(rin, index) in recipe.in" :key="index">
-            {{
-              `${rin.qty}x ${
-                'item' in rin ? rin.item : 'tag' in rin ? rin.tag : ''
-              }`
-            }}
+            <span
+              v-if="'item' in rin && missingItems[rin.item] > 0"
+              class="missing"
+            >
+              (Missing {{ missingItems[rin.item] }})
+            </span>
+            {{ rin.qty }}x
+            {{ 'item' in rin ? rin.item : 'tag' in rin ? rin.tag : '' }}
           </div>
         </template>
         <template #output>
           <div v-for="(rout, index) in recipe.out" :key="index">
-            {{
-              `${rout.qty}x ${rout.item} ${
-                rout.chance !== 100 ? `(${rout.chance}% chance)` : ''
-              }`
-            }}
+            {{ rout.qty }}x {{ rout.item }}
+            {{ rout.chance !== 100 ? `(${rout.chance}% chance)` : '' }}
           </div>
         </template>
       </IoScheme>
@@ -86,10 +91,18 @@ const recipes = computed(() => {
         selectedMachineId.value,
         recipe.id
       )
+      const stockCheck = gameStore.checkStockedItemsForRecipe(recipe.id)
+      const missingItems: { [key: Game.ItemId]: number } = {}
+      stockCheck.missingItems.forEach((missingItem, itemId) => {
+        missingItems[itemId] = Math.max(
+          0,
+          missingItem.requiredQty - missingItem.inventoryQty
+        )
+      })
       return {
         recipe,
-        hasEnoughItems: gameStore.checkStockedItemsForRecipe(recipe.id)
-          .hasEnoughItems,
+        missingItems,
+        hasEnoughItems: stockCheck.hasEnoughItems,
         progressPercentage:
           progressPercentage === undefined
             ? undefined
@@ -151,5 +164,8 @@ function onRecipeClicked(recipe: Game.Recipe) {
   left: 0;
   top: 0;
   height: 100%;
+}
+.recipe .missing {
+  color: var(--color-error);
 }
 </style>
