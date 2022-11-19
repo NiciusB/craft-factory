@@ -9,13 +9,18 @@ const router = createRouter({
       component: () => import('../views/CraftbookView.vue'),
     },
     {
-      path: '/',
+      path: '/inventory',
       name: 'inventory',
       component: () => import('../views/InventoryView.vue'),
     },
     {
       path: '/craft',
       name: 'craft',
+      component: () => import('../views/CraftView.vue'),
+    },
+    {
+      path: '/',
+      name: 'home',
       component: () => import('../views/CraftView.vue'),
     },
   ],
