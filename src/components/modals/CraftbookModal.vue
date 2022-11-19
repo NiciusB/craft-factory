@@ -23,8 +23,8 @@ const recipes = computed(() => {
       return gameStore.recipes.filter((recipe) =>
         recipe.in.some(
           (rin) =>
-            rin.item === itemId.value ||
-            (rin.tag !== undefined && item.value?.tags?.includes(rin.tag))
+            ('item' in rin && rin.item === itemId.value) ||
+            ('tag' in rin && item.value?.tags?.includes(rin.tag))
         )
       )
     }

@@ -25,9 +25,13 @@ const recipe = gameStore.getRecipe(props.recipeId)
           class="item"
           v-for="(rin, index) in recipe.in"
           :key="index"
-          @click="rin.item && openCraftbookModal(rin.item, 'crafting')"
+          @click="'item' in rin && openCraftbookModal(rin.item, 'crafting')"
         >
-          {{ `${rin.qty}x ${rin.item ?? rin.tag}` }}
+          {{
+            `${rin.qty}x ${
+              'item' in rin ? rin.item : 'tag' in rin ? rin.tag : ''
+            }`
+          }}
         </div>
       </template>
       <template #output>
@@ -35,7 +39,7 @@ const recipe = gameStore.getRecipe(props.recipeId)
           class="item"
           v-for="(rout, index) in recipe.out"
           :key="index"
-          @click="rout.item && openCraftbookModal(rout.item, 'uses')"
+          @click="'item' in rout && openCraftbookModal(rout.item, 'uses')"
         >
           {{
             `${rout.qty}x ${rout.item} ${

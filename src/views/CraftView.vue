@@ -25,7 +25,11 @@
       <IoScheme>
         <template #input>
           <div v-for="(rin, index) in recipe.in" :key="index">
-            {{ `${rin.qty}x ${rin.item ?? rin.tag}` }}
+            {{
+              `${rin.qty}x ${
+                'item' in rin ? rin.item : 'tag' in rin ? rin.tag : ''
+              }`
+            }}
           </div>
         </template>
         <template #output>
