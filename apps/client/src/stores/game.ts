@@ -274,6 +274,16 @@ export const useGameStore = defineStore('game', () => {
     return undefined
   }
 
+  function restartGame() {
+    processesQueue.value = new Set()
+    inventoryMap.value = new Map()
+  }
+
+  function giveInitialGameItems() {
+    addToInventory('core:greenhouse')
+    addToInventory('core:sapling')
+  }
+
   function serializeGameState(): string {
     return JSON.stringify(
       {
@@ -284,6 +294,8 @@ export const useGameStore = defineStore('game', () => {
     )
   }
   function restoreSerializedGameState(serialized: string) {
+    restartGame()
+
     const unserialized = JSON.parse(serialized)
     processesQueue.value = new Set(unserialized.processesQueue)
     inventoryMap.value = new Map()
@@ -315,6 +327,8 @@ export const useGameStore = defineStore('game', () => {
     runTick,
     serializeGameState,
     restoreSerializedGameState,
+    restartGame,
+    giveInitialGameItems,
   }
 })
 

@@ -26,8 +26,7 @@ function startGame() {
     gameStore.restoreSerializedGameState(savedGame)
   } else {
     // Start new game
-    gameStore.addToInventory('core:greenhouse')
-    gameStore.addToInventory('core:sapling')
+    gameStore.giveInitialGameItems()
   }
 }
 
@@ -67,6 +66,7 @@ onBeforeUnmount(() => {
       <RouterLink :to="{ name: 'craft' }">Craft</RouterLink>
       <RouterLink :to="{ name: 'inventory' }">Inventory</RouterLink>
       <RouterLink :to="{ name: 'craftbook' }">Craftbook</RouterLink>
+      <RouterLink :to="{ name: 'settings' }">Settings</RouterLink>
     </nav>
   </footer>
   <ModalsContainer />
