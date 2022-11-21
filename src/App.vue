@@ -2,23 +2,60 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useGameStore } from '@/stores/game'
 import coreMod from '@/mods/coreMod'
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const gameStore = useGameStore()
 coreMod(gameStore)
 
-gameStore.addToInventory('core:greenhouse')
-gameStore.addToInventory('core:sapling')
-
+const saveInterval = ref<number>()
 const lastUpdate = ref(Date.now())
-function loop() {
-  const now = Date.now()
-  const dt = now - lastUpdate.value
-  lastUpdate.value = now
-  gameStore.runTick(dt)
-  requestAnimationFrame(loop)
+const mounted = ref(true)
+
+function saveGame() {
+  localStorage.setItem('save1', gameStore.serializeGameState())
 }
-requestAnimationFrame(loop)
+function onBeforeUnloadCallback() {
+  saveGame()
+  return true
+}
+
+function startGame() {
+  const savedGame = localStorage.getItem('save1')
+  if (savedGame) {
+    // Load previous game
+    gameStore.restoreSerializedGameState(savedGame)
+  } else {
+    // Start new game
+    gameStore.addToInventory('core:greenhouse')
+    gameStore.addToInventory('core:sapling')
+  }
+}
+
+onMounted(() => {
+  startGame()
+
+  function loop() {
+    if (!mounted.value) {
+      return
+    }
+    const now = Date.now()
+    const dt = now - lastUpdate.value
+    lastUpdate.value = now
+    gameStore.runTick(dt)
+    requestAnimationFrame(loop)
+  }
+  requestAnimationFrame(loop)
+
+  saveInterval.value = setInterval(saveGame, 5000)
+
+  window.addEventListener('beforeunload', onBeforeUnloadCallback)
+})
+
+onBeforeUnmount(() => {
+  mounted.value = false
+  clearInterval(saveInterval.value)
+  window.removeEventListener('beforeunload', onBeforeUnloadCallback)
+})
 </script>
 
 <template>

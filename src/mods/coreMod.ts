@@ -1,6 +1,10 @@
 import type { GameStoreType } from '@/stores/game'
 
 export default function coreMod(gameStore: GameStoreType) {
+  // Reset mods, only used in development when changing this file
+  // If we didn't call this, we would double the items and recipes instead of overwriting
+  gameStore.resetMods()
+
   // Basic crafting
   gameStore.addItem({
     id: 'core:energy',
@@ -41,7 +45,7 @@ export default function coreMod(gameStore: GameStoreType) {
       { item: 'core:stone', qty: 1, chance: 100 },
       { item: 'core:stone', qty: 1, chance: 50 },
     ],
-    processingSeconds: 10,
+    processingSeconds: 30,
   })
   gameStore.addRecipe({
     id: 'core:log_to_plank',
@@ -62,7 +66,10 @@ export default function coreMod(gameStore: GameStoreType) {
   gameStore.addRecipe({
     id: 'core:craft_greenhouse',
     process: 'core:craft',
-    in: [{ item: 'core:plank', qty: 50 }],
+    in: [
+      { item: 'core:plank', qty: 50 },
+      { item: 'core:stone', qty: 5 },
+    ],
     out: [{ item: 'core:greenhouse', qty: 1, chance: 100 }],
     processingSeconds: 5,
   })
@@ -91,9 +98,9 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:craft_sawmill',
     process: 'core:craft',
     in: [
-      { item: 'core:log', qty: 4 },
       { item: 'core:plank', qty: 6 },
       { item: 'core:stick', qty: 10 },
+      { item: 'core:stone', qty: 2 },
     ],
     out: [{ item: 'core:sawmill', qty: 1, chance: 100 }],
     processingSeconds: 20,
@@ -138,8 +145,8 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:craft_biomass_generator',
     process: 'core:craft',
     in: [
-      { item: 'core:log', qty: 8 },
       { item: 'core:plank', qty: 10 },
+      { item: 'core:stone', qty: 1 },
     ],
     out: [{ item: 'core:biomass_generator', qty: 1, chance: 100 }],
     processingSeconds: 10,

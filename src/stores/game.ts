@@ -3,6 +3,11 @@ import { defineStore } from 'pinia'
 import assertItemIsMachine from '@/utils/assertItemIsMachine'
 
 export const useGameStore = defineStore('game', () => {
+  function resetMods() {
+    items.value.splice(0, items.value.length)
+    recipes.value.splice(0, recipes.value.length)
+  }
+
   const inventoryMap = ref<Map<Game.ItemId, number>>(new Map())
   const inventory = computed(() =>
     Array.from(inventoryMap.value.entries()).map((entry) => ({
@@ -267,7 +272,26 @@ export const useGameStore = defineStore('game', () => {
     return undefined
   }
 
+  function serializeGameState(): string {
+    return JSON.stringify(
+      {
+        processesQueue: processesQueue.value,
+        inventory: inventory.value,
+      },
+      (_key, value) => (value instanceof Set ? [...value] : value)
+    )
+  }
+  function restoreSerializedGameState(serialized: string) {
+    const unserialized = JSON.parse(serialized)
+    processesQueue.value = new Set(unserialized.processesQueue)
+    inventoryMap.value = new Map()
+    unserialized.inventory.forEach((item: any) => {
+      inventoryMap.value.set(item.item, item.qty)
+    })
+  }
+
   return {
+    resetMods,
     inventory,
     inventoryMachinesList,
     addToInventory,
@@ -287,6 +311,8 @@ export const useGameStore = defineStore('game', () => {
     startProcess,
     getQueueProcessProgress,
     runTick,
+    serializeGameState,
+    restoreSerializedGameState,
   }
 })
 

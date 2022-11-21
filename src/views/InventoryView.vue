@@ -7,7 +7,7 @@
       @click="openCraftbookModal(invItem.item)"
     >
       {{ invItem.item }}
-      <div class="badge">{{ invItem.qty }}</div>
+      <div class="badge">{{ numberToHuman(invItem.qty) }}</div>
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@ import { useGameStore } from '@/stores/game'
 import { computed, ref } from 'vue'
 import openCraftbookModal from '@/components/modals/openCraftbookModal'
 import searchFilterItemMatches from '@/utils/searchFilterItemMatches'
+import numberToHuman from '@/utils/numberToHuman'
 
 const search = ref('')
 
