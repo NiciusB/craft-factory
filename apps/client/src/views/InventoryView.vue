@@ -6,7 +6,7 @@
       :key="invItem.item"
       @click="openCraftbookModal(invItem.item)"
     >
-      {{ invItem.item }}
+      <ItemPortrait :item-id="invItem.item" />
       <div class="badge">{{ numberToHuman(invItem.qty) }}</div>
     </div>
   </div>
@@ -18,6 +18,7 @@ import { computed, ref } from 'vue'
 import openCraftbookModal from '@/components/modals/openCraftbookModal'
 import searchFilterItemMatches from '@/utils/searchFilterItemMatches'
 import numberToHuman from '@/utils/numberToHuman'
+import ItemPortrait from '@/components/ItemPortrait.vue'
 
 const search = ref('')
 
@@ -38,8 +39,8 @@ const inventory = computed(() =>
   padding: 1rem;
 }
 .inventory > div {
-  width: 7rem;
-  height: 7rem;
+  width: 8rem;
+  height: 8rem;
   position: relative;
   border: 1px solid var(--color-border-hover);
   border-radius: 5px;

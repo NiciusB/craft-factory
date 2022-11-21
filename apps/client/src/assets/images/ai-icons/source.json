@@ -1,0 +1,15 @@
+{
+  "prompt": "A videogame asset of: \"%%\" in the following style: 3d, minimalist, modern, dark color scheme",
+  "icons": [
+    { "prompt": "Energy orb", "filename": "core:energy" },
+    { "prompt": "Stone", "filename": "core:stone" },
+    { "prompt": "Tree Sapling", "filename": "core:sapling" },
+    { "prompt": "Wooden Log", "filename": "core:log" },
+    { "prompt": "Wooden Plank", "filename": "core:plank" },
+    { "prompt": "One wooden Stick", "filename": "core:stick" },
+    { "prompt": "Greenhouse", "filename": "core:greenhouse" },
+    { "prompt": "Sawmill building", "filename": "core:sawmill" },
+    { "prompt": "Biomass Generator", "filename": "core:biomass_generator" },
+    { "prompt": "Quarry", "filename": "core:quarry" }
+  ]
+}

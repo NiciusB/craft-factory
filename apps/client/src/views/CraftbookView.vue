@@ -6,7 +6,7 @@
       :key="item.id"
       @click="openCraftbookModal(item.id)"
     >
-      {{ item.id }}
+      <ItemPortrait :item-id="item.id" />
     </div>
   </div>
 </template>
@@ -16,6 +16,7 @@ import { useGameStore } from '@/stores/game'
 import { computed, ref } from 'vue'
 import openCraftbookModal from '@/components/modals/openCraftbookModal'
 import searchFilterItemMatches from '@/utils/searchFilterItemMatches'
+import ItemPortrait from '@/components/ItemPortrait.vue'
 
 const search = ref('')
 
@@ -34,8 +35,8 @@ const items = computed(() =>
   padding: 1rem;
 }
 .craftbook > div {
-  width: 7rem;
-  height: 7rem;
+  width: 8rem;
+  height: 8rem;
   border: 1px solid var(--color-border-hover);
   border-radius: 5px;
   display: flex;

@@ -6,7 +6,8 @@
       @click="selectedMachineId = machine"
       :class="{ machine: true, '--selected': selectedMachineId === machine }"
     >
-      {{ machine ?? 'Hand Craft' }}
+      <ItemPortrait v-if="machine !== undefined" :item-id="machine" />
+      <span v-else>Hand Craft</span>
     </div>
   </div>
   <div class="recipes">
@@ -50,12 +51,15 @@
               (Missing {{ numberToHuman(missingItems[rin.item]) }})
             </span>
             {{ rin.qty }}x
-            {{ 'item' in rin ? rin.item : 'tag' in rin ? rin.tag : '' }}
+            <ItemPortrait v-if="'item' in rin" :item-id="rin.item" />
+            <span v-else-if="'tag' in rin">
+              {{ rin.tag }}
+            </span>
           </div>
         </template>
         <template #output>
           <div v-for="(rout, index) in recipe.out" :key="index">
-            {{ rout.qty }}x {{ rout.item }}
+            {{ rout.qty }}x <ItemPortrait :item-id="rout.item" />
             {{ rout.chance !== 100 ? `(${rout.chance}% chance)` : '' }}
           </div>
         </template>
@@ -70,6 +74,7 @@ import { computed, ref } from 'vue'
 import assertItemIsMachine from '@/utils/assertItemIsMachine'
 import IoScheme from '@/components/IoScheme.vue'
 import numberToHuman from '@/utils/numberToHuman'
+import ItemPortrait from '@/components/ItemPortrait.vue'
 
 const selectedMachineId = ref<string | undefined>()
 
