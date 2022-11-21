@@ -41,11 +41,8 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:mine_stone',
     process: 'core:craft',
     in: [],
-    out: [
-      { item: 'core:stone', qty: 1, chance: 100 },
-      { item: 'core:stone', qty: 1, chance: 50 },
-    ],
-    processingSeconds: 30,
+    out: [{ item: 'core:stone', qty: 3, chance: 100 }],
+    processingSeconds: 25,
   })
   gameStore.addRecipe({
     id: 'core:log_to_plank',
@@ -87,10 +84,10 @@ export default function coreMod(gameStore: GameStoreType) {
     in: [{ item: 'core:sapling', qty: 1 }],
     out: [
       { item: 'core:sapling', qty: 1, chance: 100 },
-      { item: 'core:sapling', qty: 1, chance: 15 },
+      { item: 'core:sapling', qty: 1, chance: 10 },
       { item: 'core:log', qty: 2, chance: 100 },
     ],
-    processingSeconds: 3,
+    processingSeconds: 5,
   })
 
   // Sawmill
@@ -161,7 +158,7 @@ export default function coreMod(gameStore: GameStoreType) {
   gameStore.addRecipe({
     id: 'core:burn_stick',
     process: 'core:biomass_generator_burn',
-    in: [{ item: 'core:stick', qty: 1 }],
+    in: [{ item: 'core:stick', qty: 8 }],
     out: [{ item: 'core:energy', qty: 1, chance: 100 }],
     processingSeconds: 2,
   })
@@ -172,7 +169,7 @@ export default function coreMod(gameStore: GameStoreType) {
     process: 'core:craft',
     in: [
       { item: 'core:plank', qty: 100 },
-      { item: 'core:stone', qty: 10 },
+      { item: 'core:stone', qty: 9 },
     ],
     out: [{ item: 'core:quarry', qty: 1, chance: 100 }],
     processingSeconds: 60,
