@@ -52,14 +52,14 @@ export default function coreMod(gameStore: GameStoreType) {
     process: 'core:craft',
     in: [{ item: 'core:log', qty: 1 }],
     out: [{ item: 'core:plank', qty: 4, chance: 100 }],
-    processingSeconds: 4,
+    processingSeconds: 5,
   })
   gameStore.addRecipe({
     id: 'core:plank_to_stick',
     process: 'core:craft',
     in: [{ item: 'core:plank', qty: 2 }],
     out: [{ item: 'core:stick', qty: 4, chance: 100 }],
-    processingSeconds: 2,
+    processingSeconds: 10,
   })
 
   // Greenhouse
@@ -67,11 +67,11 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:craft_greenhouse',
     process: 'core:craft',
     in: [
-      { item: 'core:plank', qty: 50 },
-      { item: 'core:stone', qty: 5 },
+      { item: 'core:plank', qty: 100 },
+      { item: 'core:stone', qty: 100 },
     ],
     out: [{ item: 'core:greenhouse', qty: 1, chance: 100 }],
-    processingSeconds: 5,
+    processingSeconds: 10,
   })
   gameStore.addMachine({
     id: 'core:greenhouse',
@@ -90,7 +90,7 @@ export default function coreMod(gameStore: GameStoreType) {
       { item: 'core:sapling', qty: 1, chance: 15 },
       { item: 'core:log', qty: 2, chance: 100 },
     ],
-    processingSeconds: 2,
+    processingSeconds: 3,
   })
 
   // Sawmill
@@ -98,12 +98,11 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:craft_sawmill',
     process: 'core:craft',
     in: [
-      { item: 'core:plank', qty: 6 },
-      { item: 'core:stick', qty: 10 },
+      { item: 'core:stick', qty: 12 },
       { item: 'core:stone', qty: 2 },
     ],
     out: [{ item: 'core:sawmill', qty: 1, chance: 100 }],
-    processingSeconds: 20,
+    processingSeconds: 10,
   })
   gameStore.addMachine({
     id: 'core:sawmill',
@@ -145,11 +144,11 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:craft_biomass_generator',
     process: 'core:craft',
     in: [
-      { item: 'core:plank', qty: 10 },
+      { item: 'core:plank', qty: 8 },
       { item: 'core:stone', qty: 1 },
     ],
     out: [{ item: 'core:biomass_generator', qty: 1, chance: 100 }],
-    processingSeconds: 10,
+    processingSeconds: 20,
   })
   gameStore.addMachine({
     id: 'core:biomass_generator',
@@ -165,5 +164,32 @@ export default function coreMod(gameStore: GameStoreType) {
     in: [{ item: 'core:stick', qty: 1 }],
     out: [{ item: 'core:energy', qty: 1, chance: 100 }],
     processingSeconds: 2,
+  })
+
+  // Quarry
+  gameStore.addRecipe({
+    id: 'core:craft_quarry',
+    process: 'core:craft',
+    in: [
+      { item: 'core:plank', qty: 100 },
+      { item: 'core:stone', qty: 10 },
+    ],
+    out: [{ item: 'core:quarry', qty: 1, chance: 100 }],
+    processingSeconds: 60,
+  })
+  gameStore.addMachine({
+    id: 'core:quarry',
+    tags: ['core:machine'],
+    allowedDecimalQty: false,
+    processes: ['core:quarry'],
+    processingSpeed: 1,
+    consumptionPerTick: [],
+  })
+  gameStore.addRecipe({
+    id: 'core:quarry_stone',
+    process: 'core:quarry',
+    in: [{ item: 'core:energy', qty: 2 }],
+    out: [{ item: 'core:stone', qty: 4, chance: 100 }],
+    processingSeconds: 8,
   })
 }

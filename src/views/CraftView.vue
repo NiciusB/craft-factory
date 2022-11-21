@@ -47,7 +47,7 @@
               v-if="'item' in rin && missingItems[rin.item] > 0"
               class="missing"
             >
-              (Missing {{ missingItems[rin.item] }})
+              (Missing {{ numberToHuman(missingItems[rin.item]) }})
             </span>
             {{ rin.qty }}x
             {{ 'item' in rin ? rin.item : 'tag' in rin ? rin.tag : '' }}
@@ -69,6 +69,7 @@ import { useGameStore } from '@/stores/game'
 import { computed, ref } from 'vue'
 import assertItemIsMachine from '@/utils/assertItemIsMachine'
 import IoScheme from '@/components/IoScheme.vue'
+import numberToHuman from '@/utils/numberToHuman'
 
 const selectedMachineId = ref<string | undefined>()
 

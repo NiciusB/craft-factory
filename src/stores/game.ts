@@ -218,7 +218,8 @@ export const useGameStore = defineStore('game', () => {
   }
 
   function runTick(dt: number) {
-    const machinesUsedCount = new Map<Game.ItemId | undefined, number>()
+    const machinesUsed = new Set<Game.ItemId | undefined>()
+
     processesQueue.value.forEach((activeProcess) => {
       const machine =
         activeProcess.machineId === undefined
@@ -228,19 +229,20 @@ export const useGameStore = defineStore('game', () => {
         assertItemIsMachine(machine)
       }
 
-      const timesUsed = machinesUsedCount.get(activeProcess.machineId) ?? 0
+      if (machinesUsed.has(activeProcess.machineId)) {
+        return
+      }
+      machinesUsed.add(activeProcess.machineId)
+
+      const recipe = getRecipe(activeProcess.recipeId)
+
       const machinesCount =
         activeProcess.machineId === undefined
           ? 1
           : inventoryMap.value.get(activeProcess.machineId) ?? 0
-      if (timesUsed >= machinesCount) {
-        return
-      }
-      machinesUsedCount.set(activeProcess.machineId, timesUsed + 1)
 
-      const recipe = getRecipe(activeProcess.recipeId)
-
-      activeProcess.progress += ((machine?.processingSpeed ?? 1) * dt) / 1000
+      activeProcess.progress +=
+        (machine?.processingSpeed ?? 1) * (dt / 1000) * machinesCount
 
       if (activeProcess.progress >= recipe.processingSeconds) {
         // Finished, remove from queue
