@@ -1,15 +1,16 @@
 {
-  "prompt": "A videogame asset of: \"%%\" in the following style: 3d, minimalist, modern, dark color scheme",
+  "model": "stability-ai/stable-diffusion",
+  "prompt": "A videogame asset: \"%%\" in the following style: 3d, minimalist, modern, black background, icon",
   "icons": [
-    { "prompt": "Energy orb", "filename": "core:energy" },
-    { "prompt": "Stone", "filename": "core:stone" },
+    { "prompt": "Green energy Orb", "filename": "core:energy" },
+    { "prompt": "A Stone", "filename": "core:stone" },
     { "prompt": "Tree Sapling", "filename": "core:sapling" },
-    { "prompt": "Wooden Log", "filename": "core:log" },
-    { "prompt": "Wooden Plank", "filename": "core:plank" },
-    { "prompt": "One wooden Stick", "filename": "core:stick" },
+    { "prompt": "A wooden Log", "filename": "core:log" },
+    { "prompt": "A wooden Plank", "filename": "core:plank" },
+    { "prompt": "A wooden Stick", "filename": "core:stick" },
     { "prompt": "Greenhouse", "filename": "core:greenhouse" },
-    { "prompt": "Sawmill building", "filename": "core:sawmill" },
-    { "prompt": "Biomass Generator", "filename": "core:biomass_generator" },
+    { "prompt": "Sawmill machine", "filename": "core:sawmill" },
+    { "prompt": "Biomass Generator machine", "filename": "core:biomass_generator" },
     { "prompt": "Quarry", "filename": "core:quarry" }
   ]
 }

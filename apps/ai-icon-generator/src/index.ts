@@ -24,6 +24,7 @@ const outputFolder = path.join(
 
 async function main() {
     const source: {
+        model: string
         prompt: string
         icons: Array<{
             prompt: string
@@ -37,25 +38,35 @@ async function main() {
     for (let index = 0; index < source.icons.length; index++) {
         const value = source.icons[index]
         const prompt = source.prompt.replaceAll('%%', value.prompt)
+
+        console.log(
+            `${index + 1}/${source.icons.length}. Requesting: ${prompt}`
+        )
+
         await downloadPrediction(
+            source.model,
             prompt,
             path.join(outputFolder, `${value.filename}.png`)
         )
 
-        console.log(`${index + 1}/${source.icons.length}: ${prompt}`)
+        console.log(`${index + 1}/${source.icons.length}. Done`)
     }
 
     console.log(`All done!`)
 }
 void main()
 
-async function downloadPrediction(prompt: string, filepath: string) {
-    const image = await predictImage(prompt)
+async function downloadPrediction(
+    model: string,
+    prompt: string,
+    filepath: string
+) {
+    const image = await predictImage(model, prompt)
     image.pipe(fs.createWriteStream(filepath))
 }
 
-async function predictImage(prompt: string) {
-    const model = await replicate.models.get('stability-ai/stable-diffusion')
+async function predictImage(modelName: string, prompt: string) {
+    const model = await replicate.models.get(modelName)
     const prediction = await model.predict({
         prompt,
         width: 512,
@@ -64,7 +75,7 @@ async function predictImage(prompt: string) {
         num_inference_steps: 100,
         guidance_scale: 7.5,
     })
-    if (prediction === null) {
+    if (prediction === null || prediction === undefined) {
         throw new Error(
             'No output from replicate. Possibly due to NSFW detected'
         )
