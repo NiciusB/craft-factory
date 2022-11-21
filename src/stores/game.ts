@@ -23,7 +23,7 @@ export const useGameStore = defineStore('game', () => {
     return Array.from(list)
   })
   function addToInventory(itemId: Game.ItemId, qty: number = 1) {
-    if (qty < 1) {
+    if (qty <= 0) {
       throw new Error(
         `When adding to inventory, qty must be greater than 0 (${qty})`
       )
@@ -94,8 +94,32 @@ export const useGameStore = defineStore('game', () => {
     progress: number
     recipeId: Game.RecipeId
     machineId: Game.ItemId | undefined
+    inputItems: { item: Game.ItemId; qty: number }[]
   }
+
   const processesQueue = ref<Set<ActiveProcess>>(new Set())
+
+  function countRecipeInProcessesQueue(recipeId: Game.RecipeId) {
+    let count = 0
+    processesQueue.value.forEach((activeProcess) => {
+      if (activeProcess.recipeId === recipeId) {
+        count++
+      }
+    })
+    return count
+  }
+
+  function cancelQueuedRecipesForRecipeId(recipeId: Game.RecipeId) {
+    processesQueue.value.forEach((activeProcess) => {
+      if (activeProcess.recipeId === recipeId) {
+        processesQueue.value.delete(activeProcess)
+        activeProcess.inputItems.forEach((inputItem) => {
+          addToInventory(inputItem.item, inputItem.qty)
+        })
+      }
+    })
+  }
+
   function startProcess(
     recipeId: Game.RecipeId,
     machineId: Game.ItemId | undefined
@@ -132,10 +156,16 @@ export const useGameStore = defineStore('game', () => {
       )
     }
 
+    const inputItems: ActiveProcess['inputItems'] = []
+
     // Remove items from inventory
     recipe.in.forEach((rin) => {
       if ('item' in rin) {
         removeFromInventory(rin.item, rin.qty)
+        inputItems.push({
+          item: rin.item,
+          qty: rin.qty,
+        })
       }
       if ('tag' in rin) {
         throw new Error(`tag processing not implemented yet`)
@@ -146,6 +176,7 @@ export const useGameStore = defineStore('game', () => {
       progress: 0,
       recipeId,
       machineId,
+      inputItems,
     })
   }
   function checkStockedItemsForRecipe(recipeId: Game.RecipeId) {
@@ -181,7 +212,7 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  function runTick() {
+  function runTick(dt: number) {
     const machinesUsedCount = new Map<Game.ItemId | undefined, number>()
     processesQueue.value.forEach((activeProcess) => {
       const machine =
@@ -204,9 +235,9 @@ export const useGameStore = defineStore('game', () => {
 
       const recipe = getRecipe(activeProcess.recipeId)
 
-      activeProcess.progress += machine?.processingSpeed ?? 1
+      activeProcess.progress += ((machine?.processingSpeed ?? 1) * dt) / 1000
 
-      if (activeProcess.progress >= recipe.processingTicks) {
+      if (activeProcess.progress >= recipe.processingSeconds) {
         // Finished, remove from queue
         processesQueue.value.delete(activeProcess)
 
@@ -230,7 +261,7 @@ export const useGameStore = defineStore('game', () => {
         activeProcess.recipeId === recipeId
       ) {
         const recipe = getRecipe(activeProcess.recipeId)
-        return activeProcess.progress / recipe.processingTicks
+        return activeProcess.progress / recipe.processingSeconds
       }
     }
     return undefined
@@ -250,6 +281,8 @@ export const useGameStore = defineStore('game', () => {
     getRecipe,
     processes,
     processesQueue,
+    countRecipeInProcessesQueue,
+    cancelQueuedRecipesForRecipeId,
     checkStockedItemsForRecipe,
     startProcess,
     getQueueProcessProgress,

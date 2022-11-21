@@ -18,12 +18,12 @@ declare global {
       in: (({ tag: TagId } | { item: ItemId }) & { qty: numbe })[]
       out: { item: ItemId; qty: number; chance: number }[]
       process: ProcessId
-      allowedAutomation: boolean
-      processingTicks: number
+      processingSeconds: number
     }
 
     export type Machine = Item & {
       tags: ['core:machine', ...TagId]
+      allowedDecimalQty: false
       processes: ProcessId[]
       processingSpeed: number
       consumptionPerTick: { tag?: TagId; item?: ItemId; qty: number }[]

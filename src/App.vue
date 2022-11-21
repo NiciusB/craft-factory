@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useGameStore } from '@/stores/game'
 import coreMod from '@/mods/coreMod'
+import { ref } from 'vue'
 
 const gameStore = useGameStore()
 coreMod(gameStore)
@@ -9,8 +10,12 @@ coreMod(gameStore)
 gameStore.addToInventory('core:greenhouse')
 gameStore.addToInventory('core:sapling')
 
+const lastUpdate = ref(Date.now())
 function loop() {
-  gameStore.runTick()
+  const now = Date.now()
+  const dt = now - lastUpdate.value
+  lastUpdate.value = now
+  gameStore.runTick(dt)
   requestAnimationFrame(loop)
 }
 requestAnimationFrame(loop)

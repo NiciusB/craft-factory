@@ -16,9 +16,12 @@
         missingItems,
         hasEnoughItems,
         progressPercentage,
+        queueCount,
       } in recipes"
       :key="recipe.id"
-      @click="hasEnoughItems && onRecipeClicked(recipe)"
+      @click="
+        !$event.defaultPrevented && hasEnoughItems && onRecipeClicked(recipe)
+      "
       :class="{ recipe: true, '--has-enough-items': hasEnoughItems }"
     >
       <div
@@ -26,7 +29,17 @@
         class="progress-bar"
         :style="{ '--progress-percentage': progressPercentage }"
       />
-      <div>{{ Math.ceil(recipe.processingTicks / processingSpeed / 60) }}s</div>
+      <div>
+        <span
+          >{{ Math.ceil(recipe.processingSeconds / processingSpeed) }}s.
+        </span>
+        <span v-if="queueCount">
+          {{ queueCount }} in queue.
+          <button @click.prevent="cancelAllQueuedRecipes(recipe)">
+            Cancel all
+          </button>
+        </span>
+      </div>
       <IoScheme>
         <template #input>
           <div v-for="(rin, index) in recipe.in" :key="index">
@@ -99,10 +112,12 @@ const recipes = computed(() => {
           missingItem.requiredQty - missingItem.inventoryQty
         )
       })
+      const queueCount = gameStore.countRecipeInProcessesQueue(recipe.id)
       return {
         recipe,
         missingItems,
         hasEnoughItems: stockCheck.hasEnoughItems,
+        queueCount,
         progressPercentage:
           progressPercentage === undefined
             ? undefined
@@ -113,6 +128,10 @@ const recipes = computed(() => {
 
 function onRecipeClicked(recipe: Game.Recipe) {
   gameStore.startProcess(recipe.id, selectedMachineId.value)
+}
+
+function cancelAllQueuedRecipes(recipe: Game.Recipe) {
+  gameStore.cancelQueuedRecipesForRecipeId(recipe.id)
 }
 </script>
 

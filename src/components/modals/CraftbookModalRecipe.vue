@@ -18,7 +18,7 @@ const recipe = gameStore.getRecipe(props.recipeId)
 <template>
   <div class="recipe">
     <div>Process: {{ recipe.process }}</div>
-    <div>{{ recipe.processingTicks }} ticks</div>
+    <div>{{ recipe.processingSeconds }} seconds</div>
     <IoScheme>
       <template #input>
         <div
