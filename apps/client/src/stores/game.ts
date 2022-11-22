@@ -8,17 +8,12 @@ export const useGameStore = defineStore('game', () => {
     recipes.value.splice(0, recipes.value.length)
   }
 
-  const inventoryMap = ref<Map<Game.ItemId, number>>(new Map())
-  const inventory = computed(() =>
-    Array.from(inventoryMap.value.entries()).map((entry) => ({
-      item: entry[0],
-      qty: entry[1],
-    }))
-  )
+  const inventory = ref<Map<Game.ItemId, number>>(new Map())
+
   const inventoryMachinesList = computed(() => {
     const list = new Set<Game.ItemId>()
-    inventory.value.forEach((iv) => {
-      const item = getItem(iv.item)
+    inventory.value.forEach((qty, itemId) => {
+      const item = getItem(itemId)
 
       if (item.tags.includes('core:machine')) {
         list.add(item.id)
@@ -34,11 +29,11 @@ export const useGameStore = defineStore('game', () => {
       )
     }
 
-    const previousValue = inventoryMap.value.get(itemId) ?? 0
-    inventoryMap.value.set(itemId, previousValue + qty)
+    const previousValue = inventory.value.get(itemId) ?? 0
+    inventory.value.set(itemId, previousValue + qty)
   }
   function removeFromInventory(itemId: Game.ItemId, qty: number = 1) {
-    const previousValue = inventoryMap.value.get(itemId) ?? 0
+    const previousValue = inventory.value.get(itemId) ?? 0
 
     if (qty > previousValue) {
       throw new Error(
@@ -47,9 +42,9 @@ export const useGameStore = defineStore('game', () => {
     }
 
     if (previousValue - qty === 0) {
-      inventoryMap.value.delete(itemId)
+      inventory.value.delete(itemId)
     } else {
-      inventoryMap.value.set(itemId, previousValue - qty)
+      inventory.value.set(itemId, previousValue - qty)
     }
   }
 
@@ -152,13 +147,8 @@ export const useGameStore = defineStore('game', () => {
     }
 
     // Check inventory has all items
-    const stockCheck = checkStockedItemsForRecipe(recipeId)
-    if (!stockCheck.hasEnoughItems) {
-      throw new Error(
-        `Not enough items (${JSON.stringify(
-          Array.from(stockCheck.missingItems)
-        )})`
-      )
+    if (!checkHasEnoughItemsForRecipe(recipeId)) {
+      throw new Error(`Not enough items for this recipe`)
     }
 
     const inputItems: ActiveProcess['inputItems'] = []
@@ -184,26 +174,17 @@ export const useGameStore = defineStore('game', () => {
       inputItems,
     })
   }
-  function checkStockedItemsForRecipe(recipeId: Game.RecipeId) {
+  function checkHasEnoughItemsForRecipe(recipeId: Game.RecipeId) {
     const recipe = getRecipe(recipeId)
 
-    const missingItems = new Map<
-      Game.ItemId,
-      {
-        requiredQty: number
-        inventoryQty: number
-      }
-    >()
+    let hasEnoughItems = true
 
     // Check inventory has all items
     recipe.in.forEach((rin) => {
       if ('item' in rin) {
-        const inventoryValue = inventoryMap.value.get(rin.item) ?? 0
+        const inventoryValue = inventory.value.get(rin.item) ?? 0
         if (inventoryValue < rin.qty) {
-          missingItems.set(rin.item, {
-            requiredQty: rin.qty,
-            inventoryQty: inventoryValue,
-          })
+          hasEnoughItems = false
         }
       }
       if ('tag' in rin) {
@@ -211,10 +192,7 @@ export const useGameStore = defineStore('game', () => {
       }
     })
 
-    return {
-      hasEnoughItems: missingItems.size === 0,
-      missingItems,
-    }
+    return hasEnoughItems
   }
 
   function runTick(dt: number) {
@@ -239,7 +217,7 @@ export const useGameStore = defineStore('game', () => {
       const machinesCount =
         activeProcess.machineId === undefined
           ? 1
-          : inventoryMap.value.get(activeProcess.machineId) ?? 0
+          : inventory.value.get(activeProcess.machineId) ?? 0
 
       activeProcess.progress +=
         (machine?.processingSpeed ?? 1) * (dt / 1000) * machinesCount
@@ -276,7 +254,7 @@ export const useGameStore = defineStore('game', () => {
 
   function restartGame() {
     processesQueue.value = new Set()
-    inventoryMap.value = new Map()
+    inventory.value = new Map()
   }
 
   function giveInitialGameItems() {
@@ -287,21 +265,31 @@ export const useGameStore = defineStore('game', () => {
   function serializeGameState(): string {
     return JSON.stringify(
       {
+        version: 1,
         processesQueue: processesQueue.value,
         inventory: inventory.value,
       },
-      (_key, value) => (value instanceof Set ? [...value] : value)
+      (_key, value) =>
+        value instanceof Set
+          ? [...value]
+          : value instanceof Map
+          ? Object.fromEntries(value)
+          : value
     )
   }
   function restoreSerializedGameState(serialized: string) {
     restartGame()
 
     const unserialized = JSON.parse(serialized)
+
+    if (unserialized.version !== 1) {
+      // Old game. We should upgrade, for now just reset game
+      giveInitialGameItems()
+      return
+    }
+
     processesQueue.value = new Set(unserialized.processesQueue)
-    inventoryMap.value = new Map()
-    unserialized.inventory.forEach((item: any) => {
-      inventoryMap.value.set(item.item, item.qty)
-    })
+    inventory.value = new Map(Object.entries(unserialized.inventory))
   }
 
   return {
@@ -321,7 +309,7 @@ export const useGameStore = defineStore('game', () => {
     processesQueue,
     countRecipeInProcessesQueue,
     cancelQueuedRecipesForRecipeId,
-    checkStockedItemsForRecipe,
+    checkHasEnoughItemsForRecipe,
     startProcess,
     getQueueProcessProgress,
     runTick,

@@ -1,14 +1,17 @@
 <template>
-  <input v-model="search" placeholder="Search..." />
+  <div class="search">
+    <input v-model="search" placeholder="Search..." />
+  </div>
+
   <div class="inventory">
-    <div
+    <ItemRow
       v-for="invItem in inventory"
       :key="invItem.item"
-      @click="openCraftbookModal(invItem.item)"
+      :item-id="invItem.item"
+      @click="openCraftbookModal(invItem.item, 'uses')"
     >
-      <ItemPortrait :item-id="invItem.item" />
-      <div class="badge">{{ numberToHuman(invItem.qty) }}</div>
-    </div>
+      <template #amount>{{ numberToHuman(invItem.qty) }}</template>
+    </ItemRow>
   </div>
 </template>
 
@@ -18,46 +21,35 @@ import { computed, ref } from 'vue'
 import openCraftbookModal from '@/components/modals/openCraftbookModal'
 import searchFilterItemMatches from '@/utils/searchFilterItemMatches'
 import numberToHuman from '@/utils/numberToHuman'
-import ItemPortrait from '@/components/ItemPortrait.vue'
+import ItemRow from '@/components/ItemRow.vue'
 
 const search = ref('')
 
 const gameStore = useGameStore()
 const inventory = computed(() =>
-  gameStore.inventory.filter((x) =>
-    searchFilterItemMatches(search.value, x.item)
-  )
+  Array.from(gameStore.inventory.entries())
+    .map((entry) => ({
+      item: entry[0],
+      qty: entry[1],
+    }))
+    .filter((x) => searchFilterItemMatches(search.value, x.item))
 )
 </script>
 
 <style>
-.inventory {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem;
+.search {
+  margin-bottom: 0.5rem;
+  position: sticky;
+  top: 0;
+}
+.search input {
+  width: 100%;
+  height: 2rem;
 }
 .inventory > div {
-  width: 8rem;
-  height: 8rem;
-  position: relative;
-  border: 1px solid var(--color-border-hover);
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-bottom: 1px solid var(--color-border-hover);
   background-color: var(--color-background-soft);
   cursor: pointer;
-}
-.inventory > div .badge {
-  position: absolute;
-  top: -9px;
-  right: -9px;
-  border-radius: 10px;
-  padding: 0.25rem 0.5rem;
-  background-color: var(--color-brand);
-  color: var(--color-background);
-  text-shadow: 0 0 1px var(--color-text);
+  padding: 0.5rem 0.75rem;
 }
 </style>

@@ -3,7 +3,7 @@ import CraftbookModal from '@/components/modals/CraftbookModal.vue'
 
 export default function openCraftbookModal(
   itemId: Game.ItemId,
-  tab?: 'uses' | 'crafting'
+  tab?: 'uses' | 'crafting' | 'machineUses'
 ) {
   $vfm.hideAll()
 

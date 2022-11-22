@@ -3,9 +3,10 @@ import { computed, ref } from 'vue'
 import { useGameStore } from '@/stores/game'
 import CraftbookModalRecipe from '@/components/modals/CraftbookModalRecipe.vue'
 import assertItemIsMachine from '@/utils/assertItemIsMachine'
+import ItemName from '@/components/ItemName.vue'
 const gameStore = useGameStore()
 
-const tab = ref<'uses' | 'crafting' | 'machineRecipes'>('crafting')
+const tab = ref<'uses' | 'crafting' | 'machineUses'>('crafting')
 const itemId = ref<Game.ItemId>()
 function onBeforeOpen(event: any) {
   itemId.value = event.ref.params.value.itemId
@@ -33,7 +34,7 @@ const recipes = computed(() => {
         recipe.out.some((out) => out.item === itemId.value)
       )
     }
-    case 'machineRecipes': {
+    case 'machineUses': {
       const itemValue = item.value
       assertItemIsMachine(itemValue)
       return gameStore.recipes.filter((recipe) =>
@@ -54,19 +55,22 @@ const recipes = computed(() => {
     @before-open="onBeforeOpen"
   >
     <div v-if="item">
-      <span class="modal__title">{{ item.id }}</span>
-      <button @click="tab = 'crafting'" :disabled="tab === 'crafting'">
+      <span class="modal__title"><ItemName :item-id="item.id" /></span>
+      <button
+        @click="tab = 'crafting'"
+        :class="{ '--active': tab === 'crafting' }"
+      >
         Crafting Sources
       </button>
-      <button @click="tab = 'uses'" :disabled="tab === 'uses'">
+      <button @click="tab = 'uses'" :class="{ '--active': tab === 'uses' }">
         Crafting Uses
       </button>
       <button
         v-if="isMachine"
-        @click="tab = 'machineRecipes'"
-        :disabled="tab === 'machineRecipes'"
+        @click="tab = 'machineUses'"
+        :class="{ '--active': tab === 'machineUses' }"
       >
-        Machine Recipes
+        Machine Uses
       </button>
 
       <div class="modal__content">
@@ -96,6 +100,9 @@ const recipes = computed(() => {
   border-radius: 0.25rem;
   background: var(--color-background);
 }
+button.--active {
+  background: var(--color-brand);
+}
 .modal__title {
   margin: 0 2rem 0 0;
   font-size: 1.5rem;
@@ -105,5 +112,8 @@ const recipes = computed(() => {
   margin-top: 1rem;
   overflow-y: auto;
   max-height: 60vh;
+}
+.modal__content > *:not(:last-child) {
+  margin-bottom: 1rem;
 }
 </style>

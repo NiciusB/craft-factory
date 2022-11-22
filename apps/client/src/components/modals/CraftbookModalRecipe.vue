@@ -2,6 +2,8 @@
 import { useGameStore } from '@/stores/game'
 import openCraftbookModal from '@/components/modals/openCraftbookModal'
 import IoScheme from '@/components/IoScheme.vue'
+import ItemName from '@/components/ItemName.vue'
+import ItemPortrait from '@/components/ItemPortrait.vue'
 
 const gameStore = useGameStore()
 
@@ -27,11 +29,12 @@ const recipe = gameStore.getRecipe(props.recipeId)
           :key="index"
           @click="'item' in rin && openCraftbookModal(rin.item, 'crafting')"
         >
-          {{
-            `${rin.qty}x ${
-              'item' in rin ? rin.item : 'tag' in rin ? rin.tag : ''
-            }`
-          }}
+          {{ rin.qty }}x
+          <ItemName v-if="'item' in rin" :item-id="rin.item" />
+          <ItemPortrait v-if="'item' in rin" :item-id="rin.item" />
+          <span v-else-if="'tag' in rin">
+            {{ rin.tag }}
+          </span>
         </div>
       </template>
       <template #output>
@@ -41,11 +44,10 @@ const recipe = gameStore.getRecipe(props.recipeId)
           :key="index"
           @click="'item' in rout && openCraftbookModal(rout.item, 'uses')"
         >
-          {{
-            `${rout.qty}x ${rout.item} ${
-              rout.chance !== 100 ? `(${rout.chance}% chance)` : ''
-            }`
-          }}
+          {{ rout.qty }}x
+          <ItemName :item-id="rout.item" />
+          <ItemPortrait :item-id="rout.item" />
+          {{ rout.chance !== 100 ? `(${rout.chance}% chance)` : '' }}
         </div>
       </template>
     </IoScheme>
@@ -61,5 +63,8 @@ const recipe = gameStore.getRecipe(props.recipeId)
 }
 .item {
   cursor: pointer;
+}
+.item:not(:last-child) {
+  margin-bottom: 1rem;
 }
 </style>

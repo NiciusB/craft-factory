@@ -7,9 +7,20 @@ declare global {
     export type ProcessId = string
     export type TagId = string
 
+    export type Translation = {
+      locale: string
+      value: string
+    }
+
+    export type Process = {
+      id: ProcessId
+      name: Translation[]
+    }
+
     export type Item = {
       id: ItemId
       tags: TagId[]
+      name: Translation[]
       allowedDecimalQty: boolean
     }
 

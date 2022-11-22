@@ -1,8 +1,11 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
+  background: var(--color-background);
+  max-width: 480px;
+  min-height: 100vh;
   margin: 0 auto;
+  -webkit-user-select: none;
   user-select: none;
   word-break: break-word;
 }

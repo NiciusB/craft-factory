@@ -10,31 +10,37 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:energy',
     tags: [],
     allowedDecimalQty: true,
+    name: [{ locale: 'en', value: 'Energy' }],
   })
   gameStore.addItem({
     id: 'core:stone',
     tags: [],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Stone' }],
   })
   gameStore.addItem({
     id: 'core:sapling',
     tags: [],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Sapling' }],
   })
   gameStore.addItem({
     id: 'core:log',
     tags: [],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Log' }],
   })
   gameStore.addItem({
     id: 'core:plank',
     tags: [],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Plank' }],
   })
   gameStore.addItem({
     id: 'core:stick',
     tags: [],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Stick' }],
   })
 
   gameStore.addRecipe({
@@ -74,6 +80,7 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:greenhouse',
     tags: ['core:machine'],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Greenhouse' }],
     processes: ['core:greenhouse_grow'],
     processingSpeed: 1,
     consumptionPerTick: [],
@@ -105,6 +112,7 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:sawmill',
     tags: ['core:machine'],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Sawmill' }],
     processes: ['core:sawmill'],
     processingSpeed: 1,
     consumptionPerTick: [],
@@ -151,6 +159,7 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:biomass_generator',
     tags: ['core:machine'],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Biomass Generator' }],
     processes: ['core:biomass_generator_burn'],
     processingSpeed: 1,
     consumptionPerTick: [],
@@ -178,6 +187,7 @@ export default function coreMod(gameStore: GameStoreType) {
     id: 'core:quarry',
     tags: ['core:machine'],
     allowedDecimalQty: false,
+    name: [{ locale: 'en', value: 'Quarry' }],
     processes: ['core:quarry'],
     processingSpeed: 1,
     consumptionPerTick: [],

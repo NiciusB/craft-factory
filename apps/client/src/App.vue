@@ -58,23 +58,31 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main>
-    <RouterView />
-  </main>
-  <footer>
-    <nav>
-      <RouterLink :to="{ name: 'craft' }">Craft</RouterLink>
-      <RouterLink :to="{ name: 'inventory' }">Inventory</RouterLink>
-      <RouterLink :to="{ name: 'craftbook' }">Craftbook</RouterLink>
-      <RouterLink :to="{ name: 'settings' }">Settings</RouterLink>
-    </nav>
-  </footer>
+  <div class="container">
+    <main>
+      <RouterView />
+    </main>
+    <div class="flex-grow" />
+    <footer>
+      <nav>
+        <RouterLink :to="{ name: 'craft' }">Craft</RouterLink>
+        <RouterLink :to="{ name: 'inventory' }">Inventory</RouterLink>
+        <RouterLink :to="{ name: 'craftbook' }">Craftbook</RouterLink>
+        <RouterLink :to="{ name: 'settings' }">Settings</RouterLink>
+      </nav>
+    </footer>
+  </div>
   <ModalsContainer />
 </template>
 
 <style scoped>
-main {
-  min-height: calc(100vh - 100px);
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.container .flex-grow {
+  flex-grow: 1;
 }
 
 footer {

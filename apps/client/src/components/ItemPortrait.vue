@@ -6,6 +6,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  size: {
+    type: String,
+    default: '2.5rem',
+  },
 })
 
 const imageUrl = computed(() =>
@@ -18,8 +22,12 @@ const imageUrl = computed(() =>
 
 <template>
   <div class="item-portrait">
-    {{ props.itemId }}
-    <img :src="imageUrl" aria-hidden="true" alt="" />
+    <img
+      :src="imageUrl"
+      aria-hidden="true"
+      alt=""
+      :style="{ width: props.size, height: props.size }"
+    />
   </div>
 </template>
 
@@ -31,7 +39,7 @@ const imageUrl = computed(() =>
   vertical-align: middle;
 }
 .item-portrait img {
-  width: 50px;
-  height: 50px;
+  border-radius: 9px;
+  box-shadow: 0 0 9px 1px var(--color-background-contrast-300);
 }
 </style>
